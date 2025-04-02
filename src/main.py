@@ -36,6 +36,10 @@ from src.analyzers.latin_cancellation import analyze_latin_cancellation
 from src.analyzers.mexican_progression import analyze_mexican_progression
 # Import historical strategies
 from src.analyzers.martingale import analyze_martingale_strategy
+# Import Asian strategies
+from src.analyzers.feng_shui import analyze_feng_shui_strategy
+from src.analyzers.i_ching import analyze_i_ching_oracle
+from src.analyzers.pachinko import analyze_pachinko_progression
 
 from src.strategies.advanced import AdvancedBettingStrategy
 from src.optimizers.kelly import KellyOptimizer
@@ -463,6 +467,34 @@ def main():
         martingale_performance = martingale_results.get('martingale_performance', 0)
         martingale_approach = martingale_results.get('best_approach', '')
         
+        # 18. Feng Shui Strategy (Asian strategy)
+        print("\n=========================================================")
+        print("ASIAN BETTING STRATEGIES")
+        print("=========================================================")
+        
+        print("\nRunning Feng Shui Harmony Analysis...")
+        feng_shui_results = analyze_feng_shui_strategy(analyzer, validation_analyzer, validation_spins, sorted_numbers_only)
+        feng_shui_numbers = feng_shui_results.get('feng_shui_numbers', [])
+        feng_shui_win_rate = feng_shui_results.get('feng_shui_win_rate', 0)
+        feng_shui_performance = feng_shui_results.get('feng_shui_performance', 0)
+        feng_shui_type = feng_shui_results.get('best_combination_type', '')
+        
+        # 19. I Ching Oracle System
+        print("\nRunning I Ching Oracle Analysis...")
+        i_ching_results = analyze_i_ching_oracle(analyzer, validation_analyzer, validation_spins, sorted_numbers_only)
+        i_ching_numbers = i_ching_results.get('i_ching_numbers', [])
+        i_ching_win_rate = i_ching_results.get('i_ching_win_rate', 0)
+        i_ching_performance = i_ching_results.get('i_ching_performance', 0)
+        i_ching_type = i_ching_results.get('best_combination_type', '')
+        
+        # 20. Pachinko Progression
+        print("\nRunning Pachinko Progression Analysis...")
+        pachinko_results = analyze_pachinko_progression(analyzer, validation_analyzer, validation_spins, sorted_numbers_only)
+        pachinko_numbers = pachinko_results.get('pachinko_numbers', [])
+        pachinko_win_rate = pachinko_results.get('pachinko_win_rate', 0)
+        pachinko_performance = pachinko_results.get('pachinko_performance', 0)
+        pachinko_type = pachinko_results.get('best_combination_type', '')
+        
         # Add strategies to final combinations
         final_combinations = [
             {"name": "Best Original Group", "numbers": best_group['numbers'], "rate": best_group['win_rate']},
@@ -486,6 +518,9 @@ def main():
             {"name": "Latin Cancellation", "numbers": cancellation_numbers, "rate": cancellation_win_rate},
             {"name": "Mexican Progression", "numbers": progression_numbers, "rate": progression_win_rate},
             {"name": "Classic Martingale", "numbers": martingale_numbers, "rate": martingale_win_rate},
+            {"name": "Feng Shui Harmony", "numbers": feng_shui_numbers, "rate": feng_shui_win_rate},
+            {"name": "I Ching Oracle", "numbers": i_ching_numbers, "rate": i_ching_win_rate},
+            {"name": "Pachinko Progression", "numbers": pachinko_numbers, "rate": pachinko_win_rate},
         ]
         
         ultimate_best = max(final_combinations, key=lambda x: x['rate'])
@@ -581,6 +616,18 @@ def main():
             formula_name = f"Classic doubling progression on {martingale_approach}"
             print(f"\nFORMULA: {formula_name}")
             print(f"Performance vs expected: {martingale_performance:+.2f}%")
+        elif ultimate_best['name'] == "Feng Shui Harmony":
+            formula_name = f"Chinese Feng Shui {feng_shui_type} approach"
+            print(f"\nFORMULA: {formula_name}")
+            print(f"Performance vs expected: {feng_shui_performance:+.2f}%")
+        elif ultimate_best['name'] == "I Ching Oracle":
+            formula_name = f"Ancient Chinese I Ching {i_ching_type} divination"
+            print(f"\nFORMULA: {formula_name}")
+            print(f"Performance vs expected: {i_ching_performance:+.2f}%")
+        elif ultimate_best['name'] == "Pachinko Progression":
+            formula_name = f"Japanese Pachinko {pachinko_type} system"
+            print(f"\nFORMULA: {formula_name}")
+            print(f"Performance vs expected: {pachinko_performance:+.2f}%")
         else:
             formula_name = "Selection of individual numbers with best hit-rate"
             print(f"\nFORMULA: {formula_name}")
