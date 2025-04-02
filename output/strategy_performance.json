@@ -1,0 +1,178 @@
+{
+  "last_run": {
+    "date": "2025-04-02 01:26:47",
+    "win_rate": 31.0,
+    "formula": "Selection of individual numbers with best hit-rate",
+    "numbers": [
+      "30",
+      "8",
+      "15",
+      "20",
+      "11",
+      "5"
+    ],
+    "improvements": {
+      "baseline": {
+        "previous_rate": 21.16,
+        "improvement": 9.84,
+        "percentage": 46.502835538752365
+      },
+      "last_run": {
+        "previous_rate": 28.000000000000004,
+        "improvement": 2.9999999999999964,
+        "percentage": 10.7142857142857,
+        "date": "2025-04-02 01:24:12"
+      },
+      "historical": {
+        "previous_rate": 33.0,
+        "improvement": -2.0,
+        "percentage": -6.0606060606060606,
+        "formula": "Advanced analysis of non-linear correlations and physical bias"
+      }
+    }
+  },
+  "best_rate": 33.0,
+  "best_formula": "Advanced analysis of non-linear correlations and physical bias",
+  "best_numbers": [
+    "29",
+    "32",
+    "33",
+    "20",
+    "12",
+    "8",
+    "25",
+    "10"
+  ],
+  "history": [
+    {
+      "date": "2025-04-02 00:27:35",
+      "win_rate": 21.84,
+      "formula": "Optimized distribution based on parity and wheel thirds",
+      "numbers": [
+        "7",
+        "27",
+        "25",
+        "11",
+        "30",
+        "32",
+        "20",
+        "8"
+      ]
+    },
+    {
+      "date": "2025-04-02 00:30:49",
+      "win_rate": 22.040000000000003,
+      "formula": "Strategic positions using Fibonacci number patterns",
+      "numbers": [
+        "12",
+        "8",
+        "19",
+        "18",
+        "33",
+        "14",
+        "7",
+        "00"
+      ]
+    },
+    {
+      "date": "2025-04-02 00:32:45",
+      "win_rate": 22.5,
+      "formula": "Detection of physical imperfections in the roulette wheel",
+      "numbers": [
+        "24",
+        "3",
+        "31",
+        "9",
+        "6",
+        "23",
+        "19",
+        "13"
+      ]
+    },
+    {
+      "date": "2025-04-02 00:38:50",
+      "win_rate": 22.6,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 00:39:46",
+      "win_rate": 22.24,
+      "formula": "Analysis of physical wheel sectors performance"
+    },
+    {
+      "date": "2025-04-02 00:41:36",
+      "win_rate": 22.52,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 00:42:27",
+      "win_rate": 21.98,
+      "formula": "Detection of physical imperfections in the roulette wheel"
+    },
+    {
+      "date": "2025-04-02 00:42:45",
+      "win_rate": 22.36,
+      "formula": "Trajectory prediction based on initial conditions"
+    },
+    {
+      "date": "2025-04-02 00:48:37",
+      "win_rate": 22.24,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 00:54:51",
+      "win_rate": 22.32,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 00:56:43",
+      "win_rate": 22.919999999999998,
+      "formula": "Strategic focus on high-probability wheel sections"
+    },
+    {
+      "date": "2025-04-02 01:03:48",
+      "win_rate": 22.0,
+      "formula": "Consistently optimized group"
+    },
+    {
+      "date": "2025-04-02 01:14:55",
+      "win_rate": 22.3,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 01:16:23",
+      "win_rate": 22.24,
+      "formula": "Consistently optimized group"
+    },
+    {
+      "date": "2025-04-02 01:17:58",
+      "win_rate": 21.508,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 01:19:11",
+      "win_rate": 21.2208,
+      "formula": "Analysis of physical wheel sectors performance"
+    },
+    {
+      "date": "2025-04-02 01:19:24",
+      "win_rate": 32.0,
+      "formula": "Selection of individual numbers with best hit-rate"
+    },
+    {
+      "date": "2025-04-02 01:21:49",
+      "win_rate": 33.0,
+      "formula": "Advanced analysis of non-linear correlations and physical bias"
+    },
+    {
+      "date": "2025-04-02 01:24:12",
+      "win_rate": 28.000000000000004,
+      "formula": "Analysis of physical wheel sectors performance"
+    },
+    {
+      "date": "2025-04-02 01:26:47",
+      "win_rate": 31.0,
+      "formula": "Selection of individual numbers with best hit-rate"
+    }
+  ]
+}

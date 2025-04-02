@@ -1,63 +1,61 @@
-# Advanced American Roulette Strategy Analyzer
+# Advanced Roulette Strategy Analyzer
 
-This Python software provides tools for analyzing and simulating various betting strategies for American roulette using advanced mathematical probability, pattern detection, and statistical analysis.
+## Description
 
-## Features
+This project implements an advanced statistical analysis system for American roulette, using multiple prediction methodologies, mathematical modeling, and simulation. The system integrates classic gaming techniques with modern algorithms to identify patterns and maximize the probability of success.
 
-- **Statistical Simulation**: Run thousands of simulations to identify potential patterns
-- **Advanced Pattern Analysis**: Utilize quantum pattern analysis and correlation detection
-- **Automated Strategy Recommendations**: Get optimal number combinations based on deep analysis
-- **Performance Validation**: Validate strategies with independent simulations
-- **Hardware Acceleration**: Utilize GPU or parallel CPU processing when available
-- **Tracking & Reporting**: Track performance history across runs
+## Concept and Philosophy
 
-## Strategy Methodologies
+Roulette has traditionally been considered a game of pure chance, but this system explores the premise that through advanced statistical analysis, large-scale simulations, and machine learning methods, it is possible to identify suboptimal patterns in the distribution of results. The project does not claim to "beat" roulette (mathematically impossible under perfect conditions), but rather to optimize decision-making to maximize results in real environments where physical imperfections exist.
 
-The system analyzes and compares multiple betting strategies:
+## Main Features
 
-- **Parity-Third Optimization**: Combines parity (odd/even) with third-section analysis for optimal coverage
-- **Fibonacci Sequence**: Applies the Fibonacci mathematical sequence to identify number patterns
-- **Physical Wheel Section**: Focuses on specific physical sections of the roulette wheel
-- **Best Original Group**: Selects the statistically best-performing group from baseline analysis
-- **Variance Balance**: Optimizes spatial dispersion for maximum wheel coverage
-- **Optimized Hybrid Combination**: Combines multiple strategies for a balanced approach
-- **Temporal Cycles**: Detects cyclical patterns in historical results
-- **Geometric Symmetry**: Exploits symmetric geometric patterns and potential wheel biases
-- **Momentum-Based**: Analyzes momentum and trend patterns in recent spins
-- **Hot Neighbors**: Sequential analysis of numbers following high performers
-- **Dynamic Clustering**: Groups numbers based on statistical clustering algorithms
-- **Advanced Neural Correlation**: Uses neural network techniques to find hidden correlations
-- **Top Individual Numbers**: Selection of individual numbers with best hit-rate
-- **Dealer Signature**: Analysis of croupier behavior patterns and tendencies
-- **Mechanical Bias**: Detection of physical imperfections in the roulette wheel
-- **Visual Ballistics**: Trajectory prediction based on initial conditions
-- **Sector Targeting**: Strategic focus on high-probability wheel sections
-- **Chaotic Domain**: Identification of strange attractors in chaotic systems
-- **Latin Cancellation**: Pattern-based sequence analysis from Latin American casinos
-- **Mexican Progression**: Modified Martingale system focusing on repeating clusters
+- **Multi-strategy Analysis**: Implements more than 20 different strategies, from classic (Martingale) to advanced (neural correlation analysis).
+- **Large-Scale Simulation**: Ability to run millions of simulations with adjustable configuration.
+- **Bankroll Analysis**: Capital survival simulation with different strategies.
+- **Advanced Visualization**: Comparison graphs, heat maps, and performance analysis.
+- **Adaptive Optimization**: The system learns from previous results and adjusts parameters.
+- **Rigorous Validation**: All strategies undergo cross-validation to avoid overfitting.
 
-## New Modular Structure
+## Implemented Strategies
 
-The codebase has been restructured into modules for better maintainability:
+### Classic Historical Strategies
+- **Martingale**: Classic doubling system after losses.
+- **D'Alembert**: More conservative arithmetic progression than Martingale.
+- **Fibonacci**: Sequence based on the Fibonacci series.
 
-- `src/roulette/analyzers/` - Analysis components including:
-  - `advanced.py` - Core roulette analyzer
-  - `quantum.py` - Advanced quantum pattern analyzer
-  - `bayesian.py` - Bayesian prediction model
-  
-- `src/roulette/strategies/` - Betting strategies including:
-  - `advanced.py` - Advanced betting strategy implementation
-  
-- `src/roulette/optimizers/` - Mathematical optimization tools including:
-  - `kelly.py` - Kelly criterion bankroll optimization
-  
-- `src/roulette/utils/` - Utility functions including:
-  - `analysis.py` - Analysis and reporting utilities
-  - `gpu.py` - GPU acceleration tools
-  
-- `src/main.py` - Main entry point with analysis pipeline
+### Latin American Strategies
+- **Cancellation System**: Crossing-out method for bet management.
+- **Mexican Progression**: Adaptive progression system based on clusters.
 
-## Installation
+### Las Vegas Professional Techniques
+- **Dealer Signature**: Analysis of dealer-specific patterns.
+- **Sector Targeting**: Concentration on physical sectors of the roulette wheel.
+- **Visual Ballistics**: Prediction based on physical parameters.
+- **Mechanical Bias**: Detection of physical imperfections in the wheel.
+- **Chaotic Domain**: Analysis of chaotic domains to predict attractors.
 
-1. Clone this repository or download the files
-2. Install the required dependencies:
+### Advanced Methodologies
+- **Neural Correlation**: Correlation analysis using neural networks.
+- **Physical Section Analysis**: Study of physical sections of the wheel.
+- **Dynamic Clustering**: Dynamic grouping of numbers by behavior.
+- **Momentum-Based Analysis**: Analysis based on trends and momentum.
+- **Hot Neighbors**: Analysis of adjacent numbers on the physical wheel.
+- **Temporal Cycles**: Detection of temporal cycles in the sequence.
+- **Variance Balance**: Optimization based on variance balance.
+- **Geometric Symmetry**: Analysis of geometric symmetry patterns.
+
+## Analysis and Results
+
+The system generates detailed comparative analyses between all strategies, showing:
+
+- Success rate (win rate) for each strategy
+- Relative performance compared to random expectation
+- Bankroll evolution with each strategy
+- Expected bankroll survival time
+- Visualization of recommended numbers through heat maps
+- Historical performance tracking between sessions
+
+Tests have shown that certain strategies can achieve success rates above 22.5% for selections of 8 numbers, which represents a significant improvement over the 21.05% randomly expected.
+
+## Project Structure
