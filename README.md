@@ -1,80 +1,103 @@
-# Advanced Roulette Analysis System
+# Roulette Strategy Simulator
 
-A comprehensive statistical analysis system for American roulette, integrating multiple analytical approaches from various cultural and mathematical traditions.
+This project simulates American Roulette games with different betting strategies to analyze their performance and effectiveness.
 
 ## Features
 
-- **Advanced Statistical Analysis**: Computes complex frequency distributions, streaks, and probability calculations for historical roulette outcomes.
-- **Multi-Strategy Analysis**: Implements and tests various betting strategies from different traditions worldwide.
-- **Performance Validation**: Rigorous backtesting and forward-testing of strategy performance.
-- **Visualization Tools**: Generates detailed graphs and charts to visualize patterns and strategy performance.
-- **Anomaly Detection**: Identifies statistical anomalies and potential biases in roulette outcomes.
-
-## Strategies Implemented
-
-### European Strategies
-- **Martingale**: Classic doubling strategy after losses
-- **Fibonacci**: Betting based on the Fibonacci sequence
-- **D'Alembert**: Gradual progression system that increases bets after losses and decreases after wins
-- **Labouchere**: Line betting system with a predetermined sequence
-- **Oscar's Grind**: Conservative progression system designed for small, steady profits
-
-### Asian Strategies
-- **Feng Shui**: Analyzes optimal number selection based on balance and harmony principles
-- **I Ching**: Uses the hexagram system to determine betting patterns
-- **Pachinko**: Based on clustering patterns inspired by the popular Japanese game
-
-### Latin American Strategies
-- **Winograd Strategy**: Focuses on numbers 22-36 with specific low numbers based on Winograd's method
-
-### Advanced Scientific Strategies
-- **Quantum Edge**: Utilizes quantum mechanics principles to detect patterns in roulette results, analyzing Von Neumann entropy, quantum decoherence, quantum entanglement, and quantum interference
-- **Chronos Patterns**: Focuses on the temporal dimension of roulette outcomes, analyzing time-based patterns, dealer fatigue, session boundaries, and circadian rhythms
-- **Neural Symphony**: Interprets roulette outcomes as musical patterns, analyzing rhythmic structures, harmonic relationships, musical scales, and melodic contours
-- **Butterfly Effect**: Applies chaos theory to identify sensitive dependencies and bifurcation points in roulette outcomes
-- **Golden Ratio**: Uses the golden ratio and Fibonacci sequences to find natural patterns and harmonics in roulette outcomes
-
-## Setup
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/advanced-roulette-analysis.git
-
-# Navigate to the project directory
-cd advanced-roulette-analysis
-
-# Install dependencies (if applicable)
-pip install -r requirements.txt
-
-# Run the main analysis script
-python -m src.main
-```
-
-## Output
-
-The system generates:
-- Detailed statistical reports for each strategy
-- Performance comparisons between strategies
-- Visualizations of patterns and trends
-- Recommended numbers based on various analytical methods
+- Simulates American Roulette games with realistic wheel properties
+- Supports multiple betting strategies (currently includes Martingale)
+- Analyzes performance metrics including:
+  - Win rate
+  - Profit/Loss
+  - Bankroll evolution
+  - Best betting patterns
+- Generates visualizations of results
+- Configurable simulation parameters
 
 ## Project Structure
 
 ```
-advanced-roulette-analysis/
-├── src/
-│   ├── analyzers/            # Strategy implementations
-│   ├── utils/                # Utility functions and tools
-│   └── main.py               # Main execution script
-├── output/                   # Generated results and visualizations
-├── tests/                    # Test suite
-└── README.md                 # This file
+src/
+├── game/
+│   ├── roulette.py      # Roulette wheel implementation
+│   └── session.py       # Game session management
+├── strategy/
+│   ├── base_strategy.py # Base strategy class
+│   └── martingale.py    # Martingale strategy implementation
+├── analysis/
+│   └── simulator.py     # Simulation and analysis tools
+└── utils/              # Utility functions (to be added)
 ```
+
+## Installation
+
+1. Clone the repository
+2. Create a virtual environment:
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Usage
+
+Run the simulator with default parameters:
+```bash
+python main.py
+```
+
+Or specify custom parameters:
+```bash
+python main.py --initial-bankroll 2000 --num-simulations 200 --min-bet 5 --output-plot my_results.png
+```
+
+### Command Line Arguments
+
+- `--initial-bankroll`: Starting bankroll for each simulation (default: 1000.0)
+- `--num-simulations`: Number of simulations to run (default: 100)
+- `--min-bet`: Minimum bet amount (default: 1.0)
+- `--output-plot`: Path to save the results plot (default: results.png)
+
+## Adding New Strategies
+
+To add a new betting strategy:
+
+1. Create a new file in `src/strategy/` (e.g., `fibonacci.py`)
+2. Inherit from `BaseStrategy` class
+3. Implement the required methods:
+   - `calculate_bet()`
+   - `update_bankroll()`
+   - `reset()`
+
+Example:
+```python
+from .base_strategy import BaseStrategy
+
+class FibonacciStrategy(BaseStrategy):
+    def __init__(self, initial_bankroll: float, min_bet: float = 1.0):
+        super().__init__(initial_bankroll, min_bet)
+        self.base_bet = min_bet
+        self.fibonacci_sequence = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]
+        self.current_index = 0
+
+    def calculate_bet(self) -> Dict[str, float]:
+        # Implement your strategy here
+        pass
+```
+
+## Output
+
+The simulator generates:
+1. Console output with statistics about the simulations
+2. A plot file showing:
+   - Bankroll evolution of the best session
+   - Win rate distribution
+   - Profit/Loss distribution
+   - Bankroll range statistics
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+Feel free to submit issues and enhancement requests! 

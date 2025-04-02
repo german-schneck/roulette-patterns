@@ -1,0 +1,80 @@
+{
+    "MartingaleStrategy": {
+        "best_win_rate": 0.4749989059771259,
+        "best_numbers": [
+            25,
+            36,
+            18,
+            21,
+            34
+        ],
+        "wins_count": 175444,
+        "last_update": "2025-04-02T11:38:59.087747",
+        "previous_best": 0.0
+    },
+    "FibonacciStrategy": {
+        "best_win_rate": 0.48617843304150027,
+        "best_numbers": [
+            3,
+            27,
+            21,
+            34,
+            25
+        ],
+        "wins_count": 1302748,
+        "last_update": "2025-04-02T11:38:59.088041",
+        "previous_best": 0.0
+    },
+    "PatternStrategy": {
+        "best_win_rate": 0.4263306434367258,
+        "best_numbers": [
+            7,
+            1,
+            10,
+            4,
+            5
+        ],
+        "wins_count": 883128,
+        "last_update": "2025-04-02T11:38:59.088170",
+        "previous_best": 0.0
+    },
+    "ParoliStrategy": {
+        "best_win_rate": 0.48608660100118395,
+        "best_numbers": [
+            3,
+            36,
+            23,
+            7,
+            16
+        ],
+        "wins_count": 1090649,
+        "last_update": "2025-04-02T11:38:59.088279",
+        "previous_best": 0.0
+    },
+    "DAlembertStrategy": {
+        "best_win_rate": 0.48569573708037417,
+        "best_numbers": [
+            30,
+            25,
+            21,
+            12,
+            23
+        ],
+        "wins_count": 969812,
+        "last_update": "2025-04-02T11:38:59.088379",
+        "previous_best": 0.0
+    },
+    "OscarStrategy": {
+        "best_win_rate": 0.4839227815892866,
+        "best_numbers": [
+            1,
+            9,
+            7,
+            5,
+            14
+        ],
+        "wins_count": 1421497,
+        "last_update": "2025-04-02T11:38:59.088479",
+        "previous_best": 0.0
+    }
+}
