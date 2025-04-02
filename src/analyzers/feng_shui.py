@@ -9,6 +9,7 @@ based on the principles of balance, harmony, and Chinese numerology.
 import numpy as np
 import random
 from collections import defaultdict
+from src.utils.analysis import validate_numbers_performance
 
 def analyze_feng_shui_strategy(analyzer, validation_analyzer, validation_spins, sorted_numbers=None):
     """
@@ -174,7 +175,7 @@ def analyze_feng_shui_strategy(analyzer, validation_analyzer, validation_spins, 
     
     for name, numbers in combinations:
         print(f"\nValidando combinación {name}...")
-        win_rate = validation_analyzer.validate_numbers(numbers, validation_spins // 4)
+        win_rate = validate_numbers_performance(validation_analyzer, numbers, validation_spins // 4)
         coverage = len(numbers) / 38 * 100
         performance = (win_rate / coverage - 1) * 100
         
@@ -193,7 +194,7 @@ def analyze_feng_shui_strategy(analyzer, validation_analyzer, validation_spins, 
         # Create a blend with top numbers from pre-sorted list
         feng_shui_enhanced = []
         
-        # Include top 4 lucky numbers from our Feng Shui analysis
+        # Include top 4 numbers from our Feng Shui analysis
         feng_shui_enhanced.extend(best_feng_shui_numbers[:4])
         
         # Add top ranked numbers from sorted_numbers that aren't already included
@@ -201,15 +202,8 @@ def analyze_feng_shui_strategy(analyzer, validation_analyzer, validation_spins, 
             if num not in feng_shui_enhanced and len(feng_shui_enhanced) < 8:
                 feng_shui_enhanced.append(num)
         
-        # Fill up to 8 if needed
-        if len(feng_shui_enhanced) < 8:
-            for num, _ in sorted_feng_shui:
-                if num not in feng_shui_enhanced and len(feng_shui_enhanced) < 8:
-                    feng_shui_enhanced.append(num)
-        
         # Validate the enhanced combination
         print("\nValidando combinación Feng Shui mejorada...")
-        from src.utils.analysis import validate_numbers_performance
         feng_shui_win_rate = validate_numbers_performance(
             validation_analyzer, feng_shui_enhanced, validation_spins)
         

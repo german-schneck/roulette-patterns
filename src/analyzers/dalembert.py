@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-Martingale Strategy Analyzer
+D'Alembert Strategy Analyzer
 
-Implementation of the classic Martingale betting strategy for roulette,
-one of the oldest and most well-known progression systems.
+Implementation of the D'Alembert betting strategy for roulette,
+a more conservative progression system than Martingale.
 """
 
 import random
 from src.utils.analysis import validate_numbers_performance
 
-def analyze_martingale_strategy(analyzer, validation_analyzer, validation_spins, sorted_numbers=None):
+def analyze_dalembert_strategy(analyzer, validation_analyzer, validation_spins, sorted_numbers=None):
     """
-    Analyze the Martingale betting strategy for roulette.
+    Analyze the D'Alembert betting strategy for roulette.
     
-    The Martingale strategy doubles the bet after each loss,
-    with the goal of recovering all past losses plus a profit equal to the original bet.
+    The D'Alembert strategy increases bet by one unit after a loss 
+    and decreases it by one unit after a win.
     
     Args:
         analyzer: AdvancedRouletteAnalyzer instance
@@ -25,12 +25,12 @@ def analyze_martingale_strategy(analyzer, validation_analyzer, validation_spins,
     Returns:
         dict: Analysis results
     """
-    print("\nAnalyzing Martingale betting strategy...")
+    print("\nAnalyzing D'Alembert betting strategy...")
     
-    # Simulate Martingale strategy
+    # Simulate D'Alembert strategy
     bankroll = 1000  # Initial bankroll
-    base_bet = 10    # Starting bet
-    current_bet = base_bet
+    base_unit = 10   # Base betting unit
+    current_bet = base_unit
     
     # Betting on red (18/38 chance of winning on American roulette)
     win_probability = 18/38
@@ -41,8 +41,6 @@ def analyze_martingale_strategy(analyzer, validation_analyzer, validation_spins,
     loss_count = 0
     max_drawdown = 0
     peak_bankroll = bankroll
-    consecutive_losses = 0
-    max_consecutive_losses = 0
     
     # Run simulation
     for _ in range(validation_spins):
@@ -54,16 +52,14 @@ def analyze_martingale_strategy(analyzer, validation_analyzer, validation_spins,
             # Win
             bankroll += current_bet
             win_count += 1
-            consecutive_losses = 0
-            current_bet = base_bet  # Reset to base bet after a win
+            # Decrease bet by one unit, but not below base unit
+            current_bet = max(base_unit, current_bet - base_unit)
         else:
             # Loss
             bankroll -= current_bet
             loss_count += 1
-            consecutive_losses += 1
-            if consecutive_losses > max_consecutive_losses:
-                max_consecutive_losses = consecutive_losses
-            current_bet *= 2  # Double bet after a loss (Martingale rule)
+            # Increase bet by one unit
+            current_bet += base_unit
         
         # Track results
         results.append(bankroll)
@@ -87,20 +83,18 @@ def analyze_martingale_strategy(analyzer, validation_analyzer, validation_spins,
     typical_house_edge = -5.26  # American roulette house edge percentage
     relative_performance = profit_percentage - typical_house_edge
     
-    print(f"Martingale Strategy Results:")
+    print(f"D'Alembert Strategy Results:")
     print(f"Final Bankroll: ${final_bankroll:.2f}")
     print(f"Profit/Loss: ${profit:+.2f} ({profit_percentage:+.2f}%)")
     print(f"Performance vs. Random: {relative_performance:+.2f}%")
     print(f"Win Rate: {win_rate:.2f}")
     print(f"Max Drawdown: ${max_drawdown:.2f}")
-    print(f"Max Consecutive Losses: {max_consecutive_losses}")
     
     return {
-        'martingale_final_bankroll': final_bankroll,
-        'martingale_profit': profit,
-        'martingale_profit_percentage': profit_percentage,
-        'martingale_performance': relative_performance,
-        'martingale_win_rate': win_rate,
-        'martingale_max_drawdown': max_drawdown,
-        'martingale_max_consecutive_losses': max_consecutive_losses
+        'dalembert_final_bankroll': final_bankroll,
+        'dalembert_profit': profit,
+        'dalembert_profit_percentage': profit_percentage,
+        'dalembert_performance': relative_performance,
+        'dalembert_win_rate': win_rate,
+        'dalembert_max_drawdown': max_drawdown
     } 

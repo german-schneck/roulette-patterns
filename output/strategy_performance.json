@@ -1,109 +1,49 @@
 {
   "last_run": {
-    "date": "2025-04-02 01:26:47",
-    "win_rate": 31.0,
+    "date": "2025-04-02 01:45:17",
+    "win_rate": 36.0,
     "formula": "Selection of individual numbers with best hit-rate",
     "numbers": [
-      "30",
-      "8",
-      "15",
-      "20",
-      "11",
+      "0",
+      "31",
+      "27",
+      "13",
+      "2",
       "5"
     ],
     "improvements": {
       "baseline": {
         "previous_rate": 21.16,
-        "improvement": 9.84,
-        "percentage": 46.502835538752365
+        "improvement": 14.84,
+        "percentage": 70.13232514177695
       },
       "last_run": {
-        "previous_rate": 28.000000000000004,
-        "improvement": 2.9999999999999964,
-        "percentage": 10.7142857142857,
-        "date": "2025-04-02 01:24:12"
+        "previous_rate": 38.0,
+        "improvement": -2.0,
+        "percentage": -5.263157894736842,
+        "date": "2025-04-02 01:44:49"
       },
       "historical": {
-        "previous_rate": 33.0,
+        "previous_rate": 38.0,
         "improvement": -2.0,
-        "percentage": -6.0606060606060606,
-        "formula": "Advanced analysis of non-linear correlations and physical bias"
+        "percentage": -5.263157894736842,
+        "formula": "Strategic positions using Fibonacci number patterns"
       }
     }
   },
-  "best_rate": 33.0,
-  "best_formula": "Advanced analysis of non-linear correlations and physical bias",
+  "best_rate": 38.0,
+  "best_formula": "Strategic positions using Fibonacci number patterns",
   "best_numbers": [
-    "29",
-    "32",
-    "33",
+    "4",
+    "23",
+    "35",
+    "2",
+    "9",
     "20",
-    "12",
-    "8",
-    "25",
-    "10"
+    "24",
+    "18"
   ],
   "history": [
-    {
-      "date": "2025-04-02 00:27:35",
-      "win_rate": 21.84,
-      "formula": "Optimized distribution based on parity and wheel thirds",
-      "numbers": [
-        "7",
-        "27",
-        "25",
-        "11",
-        "30",
-        "32",
-        "20",
-        "8"
-      ]
-    },
-    {
-      "date": "2025-04-02 00:30:49",
-      "win_rate": 22.040000000000003,
-      "formula": "Strategic positions using Fibonacci number patterns",
-      "numbers": [
-        "12",
-        "8",
-        "19",
-        "18",
-        "33",
-        "14",
-        "7",
-        "00"
-      ]
-    },
-    {
-      "date": "2025-04-02 00:32:45",
-      "win_rate": 22.5,
-      "formula": "Detection of physical imperfections in the roulette wheel",
-      "numbers": [
-        "24",
-        "3",
-        "31",
-        "9",
-        "6",
-        "23",
-        "19",
-        "13"
-      ]
-    },
-    {
-      "date": "2025-04-02 00:38:50",
-      "win_rate": 22.6,
-      "formula": "Strategic positions using Fibonacci number patterns"
-    },
-    {
-      "date": "2025-04-02 00:39:46",
-      "win_rate": 22.24,
-      "formula": "Analysis of physical wheel sectors performance"
-    },
-    {
-      "date": "2025-04-02 00:41:36",
-      "win_rate": 22.52,
-      "formula": "Strategic positions using Fibonacci number patterns"
-    },
     {
       "date": "2025-04-02 00:42:27",
       "win_rate": 21.98,
@@ -172,6 +112,36 @@
     {
       "date": "2025-04-02 01:26:47",
       "win_rate": 31.0,
+      "formula": "Selection of individual numbers with best hit-rate"
+    },
+    {
+      "date": "2025-04-02 01:40:46",
+      "win_rate": 28.999999999999996,
+      "formula": "Consistently optimized group"
+    },
+    {
+      "date": "2025-04-02 01:41:02",
+      "win_rate": 32.0,
+      "formula": "Selection of individual numbers with best hit-rate"
+    },
+    {
+      "date": "2025-04-02 01:44:05",
+      "win_rate": 29.0,
+      "formula": "Selection of individual numbers with best hit-rate"
+    },
+    {
+      "date": "2025-04-02 01:44:26",
+      "win_rate": 36.0,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 01:44:49",
+      "win_rate": 38.0,
+      "formula": "Strategic positions using Fibonacci number patterns"
+    },
+    {
+      "date": "2025-04-02 01:45:17",
+      "win_rate": 36.0,
       "formula": "Selection of individual numbers with best hit-rate"
     }
   ]

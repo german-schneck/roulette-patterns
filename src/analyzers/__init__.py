@@ -25,12 +25,22 @@ from src.analyzers.chaotic_domain import analyze_chaotic_domain
 # Import Latin American strategies
 from src.analyzers.latin_cancellation import analyze_latin_cancellation
 from src.analyzers.mexican_progression import analyze_mexican_progression
+from src.analyzers.winograd import analyze_winograd_strategy
 # Import historical strategies
 from src.analyzers.martingale import analyze_martingale_strategy
 # Import Asian strategies
 from src.analyzers.feng_shui import analyze_feng_shui_strategy
-from src.analyzers.i_ching import analyze_i_ching_oracle
-from src.analyzers.pachinko import analyze_pachinko_progression
+from src.analyzers.i_ching import analyze_i_ching_strategy
+from src.analyzers.pachinko import analyze_pachinko_strategy
+from src.analyzers.neural_symphony import analyze_neural_symphony
+from src.analyzers.butterfly_effect import analyze_butterfly_effect
+from src.analyzers.golden_ratio import analyze_golden_ratio
+from src.analyzers.quantum_edge import analyze_quantum_edge
+from src.analyzers.fibonacci import analyze_fibonacci_strategy
+from src.analyzers.dalembert import analyze_dalembert_strategy
+from src.analyzers.labouchere import analyze_labouchere_strategy
+from src.analyzers.oscar import analyze_oscar_grind_strategy
+from src.analyzers.chronos_patterns import analyze_chronos_patterns
 
 __all__ = [
     'AdvancedRouletteAnalyzer',
@@ -52,8 +62,18 @@ __all__ = [
     'analyze_chaotic_domain',
     'analyze_latin_cancellation',
     'analyze_mexican_progression',
+    'analyze_winograd_strategy',
     'analyze_martingale_strategy',
     'analyze_feng_shui_strategy',
-    'analyze_i_ching_oracle',
-    'analyze_pachinko_progression'
+    'analyze_i_ching_strategy',
+    'analyze_pachinko_strategy',
+    'analyze_neural_symphony',
+    'analyze_butterfly_effect',
+    'analyze_golden_ratio',
+    'analyze_quantum_edge',
+    'analyze_fibonacci_strategy',
+    'analyze_dalembert_strategy',
+    'analyze_labouchere_strategy',
+    'analyze_oscar_grind_strategy',
+    'analyze_chronos_patterns'
 ]

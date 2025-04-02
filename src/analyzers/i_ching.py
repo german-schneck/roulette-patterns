@@ -9,6 +9,7 @@ based on the 64 hexagrams of the I Ching (Book of Changes).
 import numpy as np
 import random
 from collections import defaultdict
+from src.utils.analysis import validate_numbers_performance
 
 def analyze_i_ching_oracle(analyzer, validation_analyzer, validation_spins, sorted_numbers=None):
     """
@@ -173,7 +174,7 @@ def analyze_i_ching_oracle(analyzer, validation_analyzer, validation_spins, sort
     
     for name, numbers in combinations:
         print(f"\nValidando combinación {name}...")
-        win_rate = validation_analyzer.validate_numbers(numbers, validation_spins // 4)
+        win_rate = validate_numbers_performance(validation_analyzer, numbers, validation_spins // 4)
         coverage = len(numbers) / 38 * 100
         performance = (win_rate / coverage - 1) * 100
         
@@ -202,7 +203,6 @@ def analyze_i_ching_oracle(analyzer, validation_analyzer, validation_spins, sort
         
         # Validate the enhanced combination
         print("\nValidando combinación I Ching mejorada...")
-        from src.utils.analysis import validate_numbers_performance
         i_ching_win_rate = validate_numbers_performance(
             validation_analyzer, i_ching_enhanced, validation_spins)
         
@@ -227,4 +227,7 @@ def analyze_i_ching_oracle(analyzer, validation_analyzer, validation_spins, sort
         'i_ching_win_rate': final_win_rate,
         'i_ching_performance': final_performance,
         'best_combination_type': best_combination_name
-    } 
+    }
+
+# Create an alias for the function to match the import in __init__.py
+analyze_i_ching_strategy = analyze_i_ching_oracle 

@@ -7,8 +7,33 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import json
 import os
+import random
 from datetime import datetime
 from collections import defaultdict
+
+def generate_random_history(spins):
+    """
+    Generate a random history of roulette outcomes.
+    
+    Args:
+        spins (int): Number of spins to generate
+    
+    Returns:
+        list: A list of random roulette outcomes
+    """
+    # American roulette wheel numbers (0-36 plus 00)
+    wheel_order = [
+        '0', '28', '9', '26', '30', '11', '7', '20', '32', '17', '5', '22', '34', '15', 
+        '3', '24', '36', '13', '1', '00', '27', '10', '25', '29', '12', '8', '19', '31', 
+        '18', '6', '21', '33', '16', '4', '23', '35', '14', '2'
+    ]
+    
+    # Generate random spins
+    history = []
+    for _ in range(spins):
+        history.append(random.choice(wheel_order))
+    
+    return history
 
 def validate_numbers_performance(analyzer, numbers, n_spins):
     """

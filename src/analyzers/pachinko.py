@@ -10,6 +10,7 @@ import numpy as np
 import random
 from collections import defaultdict
 import math
+from src.utils.analysis import validate_numbers_performance
 
 def analyze_pachinko_progression(analyzer, validation_analyzer, validation_spins, sorted_numbers=None):
     """
@@ -217,7 +218,7 @@ def analyze_pachinko_progression(analyzer, validation_analyzer, validation_spins
     
     for name, numbers in combinations:
         print(f"\nValidando combinación {name}...")
-        win_rate = validation_analyzer.validate_numbers(numbers, validation_spins // 4)
+        win_rate = validate_numbers_performance(validation_analyzer, numbers, validation_spins // 4)
         coverage = len(numbers) / 38 * 100
         performance = (win_rate / coverage - 1) * 100
         
@@ -246,7 +247,6 @@ def analyze_pachinko_progression(analyzer, validation_analyzer, validation_spins
         
         # Validate the enhanced combination
         print("\nValidando combinación Pachinko mejorada...")
-        from src.utils.analysis import validate_numbers_performance
         pachinko_win_rate = validate_numbers_performance(
             validation_analyzer, pachinko_enhanced, validation_spins)
         
@@ -271,4 +271,7 @@ def analyze_pachinko_progression(analyzer, validation_analyzer, validation_spins
         'pachinko_win_rate': final_win_rate,
         'pachinko_performance': final_performance,
         'best_combination_type': best_combination_name
-    } 
+    }
+
+# Add an alias at the end of the file
+analyze_pachinko_strategy = analyze_pachinko_progression 

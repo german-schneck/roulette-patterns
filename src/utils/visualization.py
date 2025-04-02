@@ -65,140 +65,56 @@ def plot_methodology_performance(final_combinations, target_directory="output/gr
         print(f"Error al generar gráfica de metodologías: {e}")
         return False
 
-def plot_methodology_pl_simulation(final_combinations, target_directory="output/graphs", initial_bankroll=1000):
+def plot_methodology_pl_simulation(strategy_returns, output_path):
     """
-    Generate a simulation of P/L (Profit/Loss) for each methodology.
-    Simulates betting until the bankroll reaches 0 or a maximum number of spins.
+    Plot a simulation of P&L for different methodologies.
     
     Args:
-        final_combinations: List of dictionaries with methodology data
-        target_directory: Directory to save the plot
-        initial_bankroll: Initial bankroll in dollars
-        
-    Returns:
-        bool: True if plotting was successful
+        strategy_returns: List of tuples with (strategy_name, performance_percentage)
+        output_path: Path to save the visualization
     """
-    try:
-        # Create directory if it doesn't exist
-        os.makedirs(target_directory, exist_ok=True)
-        
-        # Simulation parameters
-        max_spins = 5000  # Maximum number of spins to simulate
-        bet_size = 10  # Base betting unit
-        
-        # Create figure
-        plt.figure(figsize=(14, 8))
-        
-        # Calculate baseline (random chance)
-        avg_coverage = sum(len(combo["numbers"]) for combo in final_combinations) / len(final_combinations)
-        baseline_prob = avg_coverage / 38
-        
-        # Results tracking
-        bankruptcies = {}  # Track when each strategy goes bankrupt
-        max_duration = 0  # Track the longest lasting strategy
-        
-        # For comparison, add a random strategy performance line
-        random_pl = []
-        balance = initial_bankroll
-        np.random.seed(42)  # For reproducibility
-        spins_count = 0
-        
-        for spin in range(max_spins):
-            if balance <= 0:
-                bankruptcies["Estrategia Aleatoria"] = spin
-                break
-                
-            current_bet = min(bet_size, balance)  # Can't bet more than remaining bankroll
-            
-            # Simulating a bet with random chance
-            if np.random.random() < baseline_prob:  # Win
-                balance += current_bet * (36 / avg_coverage - 1)  # Payout adjusted for coverage
-            else:  # Loss
-                balance -= current_bet
-                
-            random_pl.append(balance)
-            spins_count = spin + 1
-            
-        max_duration = max(max_duration, spins_count)
-        
-        # Plot random strategy as a reference
-        plt.plot(range(spins_count), random_pl, 'k--', label='Estrategia Aleatoria', alpha=0.5)
-        
-        # Simulate and plot each methodology
-        methodology_results = {}
-        
-        for combo in final_combinations:
-            pl_curve = []
-            balance = initial_bankroll
-            win_prob = combo["rate"] / 100
-            
-            np.random.seed(42)  # Same seed for fair comparison
-            spins_count = 0
-            
-            for spin in range(max_spins):
-                if balance <= 0:
-                    bankruptcies[combo["name"]] = spin
-                    break
-                    
-                current_bet = min(bet_size, balance)  # Can't bet more than remaining bankroll
-                
-                # Simulating a bet with methodology's win probability
-                if np.random.random() < win_prob:  # Win
-                    balance += current_bet * (36 / len(combo["numbers"]) - 1)  # Payout adjusted for coverage
-                else:  # Loss
-                    balance -= current_bet
-                    
-                pl_curve.append(balance)
-                spins_count = spin + 1
-                
-            max_duration = max(max_duration, spins_count)
-            methodology_results[combo["name"]] = {
-                "curve": pl_curve,
-                "duration": spins_count,
-                "final_balance": balance
-            }
-        
-        # Plot each methodology curve with adjusted length
-        for name, data in methodology_results.items():
-            plt.plot(range(data["duration"]), data["curve"], label=f"{name} (${data['final_balance']:.0f})")
-        
-        # Add bankruptcy marks
-        for name, spin in bankruptcies.items():
-            plt.axvline(x=spin, color='red', linestyle=':', alpha=0.5)
-            plt.text(spin, initial_bankroll * 0.8, f"{name} quebró", 
-                    rotation=90, ha='right', va='center', fontsize=8)
-        
-        # Add labels and title
-        plt.title(f"Simulación de Evolución del Bankroll (Inicial: ${initial_bankroll})", fontsize=15)
-        plt.xlabel("Número de Apuestas")
-        plt.ylabel("Bankroll ($)")
-        plt.grid(True, linestyle='--', alpha=0.7)
-        
-        # Add horizontal line at 0 and initial bankroll
-        plt.axhline(y=0, color='r', linestyle='-', alpha=0.3)
-        plt.axhline(y=initial_bankroll, color='g', linestyle='--', alpha=0.3)
-        
-        # Format y-axis with dollar symbol
-        formatter = ticker.FormatStrFormatter('$%1.0f')
-        plt.gca().yaxis.set_major_formatter(formatter)
-        
-        # Add legend outside of plot
-        plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-        plt.tight_layout()
-        
-        # Set xlim to show full range
-        plt.xlim(0, max_duration)
-        
-        # Save plot
-        plt.savefig(f"{target_directory}/bankroll_simulation.png", dpi=300)
-        plt.close()
-        
-        print(f"Gráfica de simulación de bankroll guardada: {target_directory}/bankroll_simulation.png")
-        return True
-        
-    except Exception as e:
-        print(f"Error al generar gráfica de simulación de bankroll: {e}")
-        return False
+    # Create figure and axes
+    plt.figure(figsize=(12, 8))
+    
+    # Sort strategies by performance
+    sorted_strategies = sorted(strategy_returns, key=lambda x: x[1], reverse=True)
+    
+    # Calculate statistics
+    strategy_names = [s[0] for s in sorted_strategies]
+    performances = [s[1] for s in sorted_strategies]
+    
+    # Create color map based on performance
+    colors = []
+    for perf in performances:
+        if perf > 5:
+            colors.append('green')
+        elif perf > 0:
+            colors.append('lightgreen')
+        elif perf > -10:
+            colors.append('orange')
+        else:
+            colors.append('red')
+    
+    # Plot horizontal bar chart of performances
+    y_pos = np.arange(len(strategy_names))
+    plt.barh(y_pos, performances, align='center', color=colors)
+    plt.yticks(y_pos, strategy_names)
+    
+    # Add a vertical line at 0 for reference
+    plt.axvline(x=0, color='black', linestyle='-', alpha=0.3)
+    
+    # Add labels
+    plt.xlabel('Performance vs. Random (%)')
+    plt.title('Strategy Performance Comparison')
+    
+    # Add performance values at the end of each bar
+    for i, v in enumerate(performances):
+        plt.text(v + 0.5, i, f"{v:+.1f}%", va='center')
+    
+    # Adjust layout and save
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
 
 def plot_individual_methodology_performance(methodology, analyzer, validation_spins, target_directory="output/graphs", initial_bankroll=1000):
     """
@@ -514,4 +430,152 @@ def plot_bankroll_survival(final_combinations, target_directory="output/graphs",
         
     except Exception as e:
         print(f"Error al generar gráfica de supervivencia del bankroll: {e}")
-        return False 
+        return False
+
+def plot_strategy_comparison(strategies, output_path):
+    """
+    Plot a comparison of multiple strategies based on win rate and performance.
+    
+    Args:
+        strategies: List of tuples (strategy_name, win_rate, performance)
+        output_path: Path to save the plot
+    """
+    # Extract data from strategies
+    names = [s[0] for s in strategies]
+    win_rates = [s[1] for s in strategies]
+    performances = [s[2] for s in strategies]
+    
+    # Set up the figure
+    fig, ax1 = plt.subplots(figsize=(12, 8))
+    
+    # Plot win rates as bars
+    x = np.arange(len(names))
+    bar_width = 0.35
+    
+    bars = ax1.bar(x, win_rates, bar_width, label='Tasa de Victoria (%)', color='skyblue')
+    
+    # Add values on top of bars
+    for bar in bars:
+        height = bar.get_height()
+        ax1.annotate(f'{height:.2f}%',
+                    xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+    
+    # Create a second y-axis for performance
+    ax2 = ax1.twinx()
+    line = ax2.plot(x, performances, 'o-', color='red', label='Rendimiento vs Aleatorio (%)')
+    
+    # Add values next to points
+    for i, perf in enumerate(performances):
+        ax2.annotate(f'{perf:+.2f}%',
+                    xy=(i, perf),
+                    xytext=(10, 0),  # 10 points horizontal offset
+                    textcoords="offset points",
+                    ha='left', va='center')
+    
+    # Set up the axes
+    ax1.set_xlabel('Estrategia', fontsize=12)
+    ax1.set_ylabel('Tasa de Victoria (%)', color='blue', fontsize=12)
+    ax2.set_ylabel('Rendimiento vs Aleatorio (%)', color='red', fontsize=12)
+    
+    # Set tick parameters
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(names, rotation=45, ha='right')
+    ax1.tick_params(axis='y', labelcolor='blue')
+    ax2.tick_params(axis='y', labelcolor='red')
+    
+    # Add a reference line at 0% performance
+    ax2.axhline(y=0, color='gray', linestyle='--', alpha=0.7)
+    
+    # Add a random expectation line at 21.05% for win rate (8 numbers out of 38)
+    ax1.axhline(y=21.05, color='green', linestyle='--', alpha=0.7, label='Expectativa Aleatoria (21.05%)')
+    
+    # Add legends
+    lines, labels = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines + lines2, labels + labels2, loc='upper left')
+    
+    # Add a title
+    plt.title('Comparación de Estrategias de Ruleta', fontsize=16)
+    
+    # Adjust layout
+    fig.tight_layout()
+    
+    # Save the figure
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+
+def plot_performance_history(analyzer, output_path):
+    """
+    Plot the performance history of the analyzer.
+    
+    Args:
+        analyzer: AdvancedRouletteAnalyzer instance
+        output_path: Path to save the plot
+    """
+    # Get recent history
+    recent_history = analyzer.get_recent_history(100)
+    
+    # Count occurrences of each number
+    number_counts = {}
+    for num in recent_history:
+        if num not in number_counts:
+            number_counts[num] = 0
+        number_counts[num] += 1
+    
+    # Calculate expected frequency
+    expected_freq = len(recent_history) / 38
+    
+    # Prepare data for plotting
+    numbers = sorted(number_counts.keys())
+    frequencies = [number_counts.get(num, 0) for num in numbers]
+    
+    # Calculate deviation from expected
+    deviations = [(freq - expected_freq) / expected_freq * 100 for freq in frequencies]
+    
+    # Create the plot
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
+    
+    # Plot frequencies
+    bars = ax1.bar(numbers, frequencies, color='skyblue')
+    ax1.axhline(y=expected_freq, color='red', linestyle='--', 
+               label=f'Esperado ({expected_freq:.2f})')
+    
+    # Highlight highest and lowest frequency numbers
+    max_freq = max(frequencies)
+    min_freq = min(frequencies)
+    
+    for i, bar in enumerate(bars):
+        if bar.get_height() == max_freq:
+            bar.set_color('green')
+        elif bar.get_height() == min_freq:
+            bar.set_color('red')
+    
+    ax1.set_xlabel('Número')
+    ax1.set_ylabel('Frecuencia')
+    ax1.set_title('Distribución de Resultados Recientes')
+    ax1.legend()
+    
+    # Plot deviation from expected
+    bars = ax2.bar(numbers, deviations, color='lightgreen')
+    ax2.axhline(y=0, color='black', linestyle='-')
+    
+    # Color positive and negative bars differently
+    for i, bar in enumerate(bars):
+        if bar.get_height() < 0:
+            bar.set_color('salmon')
+    
+    ax2.set_xlabel('Número')
+    ax2.set_ylabel('Desviación del Esperado (%)')
+    ax2.set_title('Desviación de la Distribución Uniforme')
+    
+    # Adjust layout
+    plt.tight_layout()
+    
+    # Save the figure
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.close()
+    
+    return True 
