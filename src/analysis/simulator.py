@@ -10,11 +10,10 @@ from ..strategy.base_strategy import BaseStrategy
 from .history import History
 
 class Simulator:
-    def __init__(self, initial_bankroll: float, num_simulations: int, min_bet: float, strategies: List[Type[BaseStrategy]]):
-        self.initial_bankroll = initial_bankroll
-        self.num_simulations = num_simulations
-        self.min_bet = min_bet
+    def __init__(self, strategies: List[BaseStrategy], max_spins: int = 1000, profit_target_percentage: float = 50.0):
         self.strategies = strategies
+        self.max_spins = max_spins
+        self.profit_target_percentage = profit_target_percentage
         self.history = {}
 
     def print_progress_bar(self, current, total, prefix='', suffix='', length=50, fill='█'):
@@ -26,24 +25,26 @@ class Simulator:
         if current == total:
             print()
 
-    def run_simulations(self) -> Dict[str, List[Dict]]:
-        """Run multiple game sessions for each strategy."""
+    def run_simulations(self, num_simulations: int = 100) -> Dict:
+        """Run multiple simulations for each strategy."""
         results = {}
         
-        for strategy_class in self.strategies:
-            strategy_name = strategy_class.__name__
+        for strategy in self.strategies:
+            strategy_name = strategy.__class__.__name__
             print(f"\nSimulando {strategy_name}...")
             results[strategy_name] = []
             
-            for i in range(self.num_simulations):
-                strategy = strategy_class(self.initial_bankroll, self.min_bet)
-                session = GameSession(strategy)
+            for i in range(num_simulations):
+                # Crear una nueva instancia de la estrategia para cada simulación
+                strategy_instance = strategy.__class__(strategy.initial_bankroll, strategy.min_bet)
+                session = GameSession(strategy_instance, max_spins=self.max_spins, 
+                                     profit_target_percentage=self.profit_target_percentage)
                 session.play_until_bankruptcy()
                 results[strategy_name].append(session.get_results())
                 
                 # Mostrar progreso
-                self.print_progress_bar(i + 1, self.num_simulations, prefix=f'{strategy_name}:')
-        
+                self.print_progress_bar(i + 1, num_simulations, prefix=f'{strategy_name}:')
+            
         return results
 
     def analyze_number_patterns(self, spins: List[Dict], strategy_name: str) -> Tuple[List[Tuple[List[int], int]], List[Tuple[int, int]]]:
@@ -161,101 +162,143 @@ class Simulator:
         
         return result_patterns, sorted_numbers
 
-    def analyze_results(self, results: Dict[str, List[Dict]]) -> Dict[str, Dict]:
-        """Analyze results for all strategies."""
+    def analyze_results(self, results: Dict) -> Dict:
+        """Analyze the results of all simulations."""
         analysis = {}
         
         for strategy_name, sessions in results.items():
-            successful_sessions = sum(1 for session in sessions if session['final_bankroll'] > self.initial_bankroll)
-            total_wins = sum(session['wins'] for session in sessions)
-            total_spins = sum(session['num_spins'] for session in sessions)
+            # Calcular métricas básicas
+            num_sessions = len(sessions)
             
-            # Analizar patrones de números exitosos
-            all_spins = []
-            for session in sessions:
-                all_spins.extend(session['spins'])
+            # Contar razones de terminación
+            termination_counts = Counter(s['termination_reason'] for s in sessions)
+            bankruptcy_count = termination_counts['bankruptcy']
+            max_spins_count = termination_counts['max_spins_reached']
+            profit_target_count = termination_counts['profit_target_reached']
             
-            successful_patterns, successful_numbers = self.analyze_number_patterns(all_spins, strategy_name)
+            # Una sesión es exitosa si termina por alcanzar el objetivo de ganancia o por alcanzar el máximo de tiradas con un bankroll mayor al inicial
+            successful_sessions = profit_target_count + sum(1 for s in sessions 
+                                if s['termination_reason'] == 'max_spins_reached' and 
+                                s['final_bankroll'] > s['initial_bankroll'])
+            
+            success_rate = successful_sessions / num_sessions
+            
+            # Calcular métricas de rendimiento
+            win_rates = [s['wins'] / s['num_spins'] for s in sessions]
+            avg_win_rate = sum(win_rates) / num_sessions
+            
+            profits = [s['final_bankroll'] - s['initial_bankroll'] for s in sessions]
+            avg_profit = sum(profits) / num_sessions
+            max_profit = max(profits)
+            max_loss = min(profits)
+            
+            avg_spins = sum(s['num_spins'] for s in sessions) / num_sessions
             
             analysis[strategy_name] = {
-                'successful_sessions': successful_sessions,
-                'total_wins': total_wins,
-                'total_spins': total_spins,
-                'win_rate': total_wins / total_spins if total_spins > 0 else 0,
-                'successful_patterns': successful_patterns,
-                'successful_numbers': successful_numbers
+                'success_rate': success_rate,
+                'win_rate': avg_win_rate,
+                'avg_profit_loss': avg_profit,
+                'max_profit': max_profit,
+                'max_loss': max_loss,
+                'avg_spins': avg_spins,
+                'bankruptcy_count': bankruptcy_count,
+                'max_spins_count': max_spins_count,
+                'profit_target_count': profit_target_count
             }
         
         return analysis
 
-    def get_most_successful_numbers(self, results: Dict[str, List[Dict]]) -> Dict[str, List[tuple]]:
-        """Get the most successful numbers for each strategy."""
-        number_analysis = {}
+    def get_best_betting_patterns(self, results: Dict) -> Dict[str, List[Tuple[str, int]]]:
+        """Analyze the most successful betting patterns for each strategy."""
+        patterns = {}
         
         for strategy_name, sessions in results.items():
+            # Recolectar números ganadores
             winning_numbers = []
             for session in sessions:
                 for spin in session['spins']:
                     if spin['winnings'] > 0:
                         winning_numbers.append(spin['number'])
             
-            # Contar frecuencia de números ganadores
+            # Contar ocurrencias
             number_counts = Counter(winning_numbers)
             
-            # Obtener los 5 números más exitosos
-            most_successful = number_counts.most_common(5)
-            number_analysis[strategy_name] = most_successful
+            # Obtener los 5 números más comunes
+            patterns[strategy_name] = number_counts.most_common(5)
         
-        return number_analysis
+        return patterns
 
-    def plot_results(self, results: Dict[str, List[Dict]], output_path: str) -> None:
-        """Generate plots comparing all strategies."""
+    def plot_results(self, results: Dict, output_file: str = 'output/roulette_simulation.png'):
+        """Plot the results of all simulations."""
         plt.figure(figsize=(15, 10))
         
         # Subplot 1: Evolución del bankroll
         plt.subplot(2, 2, 1)
         for strategy_name, sessions in results.items():
-            # Encontrar la longitud mínima del historial
-            min_length = min(len(session['bankroll_history']) for session in sessions)
-            # Calcular el promedio solo hasta la longitud mínima
-            avg_bankroll = [sum(session['bankroll_history'][i] for session in sessions) / len(sessions)
-                          for i in range(min_length)]
-            plt.plot(avg_bankroll, label=strategy_name)
-        plt.title('Evolución Promedio del Bankroll')
-        plt.xlabel('Número de Spins')
+            for session in sessions:
+                if session['termination_reason'] == 'profit_target_reached':
+                    plt.plot(session['bankroll_history'], color='green', alpha=0.3)
+                elif session['termination_reason'] == 'max_spins_reached':
+                    plt.plot(session['bankroll_history'], color='blue', alpha=0.3)
+                else:
+                    plt.plot(session['bankroll_history'], color='red', alpha=0.1)
+        plt.title('Evolución del Bankroll')
+        plt.xlabel('Número de Tiradas')
         plt.ylabel('Bankroll')
+        
+        # Subplot 2: Distribución de tasas de victoria
+        plt.subplot(2, 2, 2)
+        win_rates = []
+        labels = []
+        for strategy_name, sessions in results.items():
+            rates = [s['wins'] / s['num_spins'] for s in sessions]
+            win_rates.append(rates)
+            labels.extend([strategy_name] * len(rates))
+        plt.boxplot(win_rates, labels=list(results.keys()))
+        plt.title('Distribución de Tasas de Victoria')
+        plt.xticks(rotation=45)
+        plt.ylabel('Tasa de Victoria')
+        
+        # Subplot 3: Distribución de beneficio/pérdida
+        plt.subplot(2, 2, 3)
+        profits = []
+        labels = []
+        for strategy_name, sessions in results.items():
+            session_profits = [s['final_bankroll'] - s['initial_bankroll'] for s in sessions]
+            profits.append(session_profits)
+            labels.extend([strategy_name] * len(session_profits))
+        plt.boxplot(profits, labels=list(results.keys()))
+        plt.title('Distribución de Beneficio/Pérdida')
+        plt.xticks(rotation=45)
+        plt.ylabel('Beneficio/Pérdida')
+        
+        # Subplot 4: Razones de terminación
+        plt.subplot(2, 2, 4)
+        strategy_names = list(results.keys())
+        bankruptcy_counts = []
+        max_spins_counts = []
+        profit_target_counts = []
+        
+        for strategy_name, sessions in results.items():
+            termination_counts = Counter(s['termination_reason'] for s in sessions)
+            bankruptcy_counts.append(termination_counts['bankruptcy'])
+            max_spins_counts.append(termination_counts['max_spins_reached'])
+            profit_target_counts.append(termination_counts['profit_target_reached'])
+        
+        width = 0.25
+        x = range(len(strategy_names))
+        
+        plt.bar([i - width for i in x], bankruptcy_counts, width=width, label='Bancarrota')
+        plt.bar(x, max_spins_counts, width=width, label='Máx. Tiradas')
+        plt.bar([i + width for i in x], profit_target_counts, width=width, label='Objetivo Ganancia')
+        
+        plt.xticks(x, strategy_names, rotation=45)
+        plt.title('Razones de Terminación')
+        plt.ylabel('Número de Sesiones')
         plt.legend()
         
-        # Subplot 2: Distribución de Win Rate
-        plt.subplot(2, 2, 2)
-        win_rates = {strategy_name: [session['win_rate'] for session in sessions]
-                    for strategy_name, sessions in results.items()}
-        plt.boxplot(win_rates.values(), labels=win_rates.keys())
-        plt.title('Distribución de Win Rate')
-        plt.xticks(rotation=45)
-        plt.ylabel('Win Rate')
-        
-        # Subplot 3: Distribución de Profit/Loss
-        plt.subplot(2, 2, 3)
-        profits = {strategy_name: [session['final_bankroll'] - self.initial_bankroll for session in sessions]
-                  for strategy_name, sessions in results.items()}
-        plt.boxplot(profits.values(), labels=profits.keys())
-        plt.title('Distribución de Profit/Loss')
-        plt.xticks(rotation=45)
-        plt.ylabel('Profit/Loss')
-        
-        # Subplot 4: Rango de Bankroll
-        plt.subplot(2, 2, 4)
-        bankroll_ranges = {strategy_name: [max(session['bankroll_history']) - min(session['bankroll_history'])
-                                         for session in sessions]
-                         for strategy_name, sessions in results.items()}
-        plt.boxplot(bankroll_ranges.values(), labels=bankroll_ranges.keys())
-        plt.title('Rango de Bankroll')
-        plt.xticks(rotation=45)
-        plt.ylabel('Rango')
-        
         plt.tight_layout()
-        plt.savefig(output_path)
+        plt.savefig(output_file)
         plt.close()
 
     def update_history(self, analysis: Dict, number_analysis: Dict) -> Dict[str, Tuple[bool, float]]:
@@ -263,7 +306,7 @@ class Simulator:
         improvements = {}
         
         for strategy_name in self.strategies:
-            strategy_name = strategy_name.__name__
+            strategy_name = strategy_name.__class__.__name__
             stats = analysis[strategy_name]
             numbers = number_analysis[strategy_name]
             

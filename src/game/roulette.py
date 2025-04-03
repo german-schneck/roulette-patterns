@@ -4,21 +4,21 @@ import random
 class Roulette:
     def __init__(self):
         # Define the wheel numbers and their properties
-        self.numbers = list(range(0, 37))  # 0-36
+        self.numbers = list(range(37))  # 0-36
         self.colors = {
             0: 'green',
-            32: 'red', 19: 'red', 21: 'red', 25: 'red', 34: 'red', 27: 'red',
-            36: 'red', 30: 'red', 23: 'red', 5: 'red', 16: 'red', 1: 'red',
-            14: 'red', 9: 'red', 18: 'red', 7: 'red', 12: 'red', 3: 'red',
-            15: 'black', 4: 'black', 2: 'black', 17: 'black', 6: 'black',
-            13: 'black', 11: 'black', 8: 'black', 10: 'black', 24: 'black',
-            33: 'black', 20: 'black', 31: 'black', 22: 'black', 29: 'black',
-            28: 'black', 35: 'black', 26: 'black'
+            1: 'red', 3: 'red', 5: 'red', 7: 'red', 9: 'red', 12: 'red',
+            14: 'red', 16: 'red', 18: 'red', 19: 'red', 21: 'red', 23: 'red',
+            25: 'red', 27: 'red', 30: 'red', 32: 'red', 34: 'red', 36: 'red',
+            2: 'black', 4: 'black', 6: 'black', 8: 'black', 10: 'black',
+            11: 'black', 13: 'black', 15: 'black', 17: 'black', 20: 'black',
+            22: 'black', 24: 'black', 26: 'black', 28: 'black', 29: 'black',
+            31: 'black', 33: 'black', 35: 'black'
         }
         
-        # Define number properties
-        self.even_numbers = [n for n in self.numbers if n != 0 and n % 2 == 0]
-        self.odd_numbers = [n for n in self.numbers if n != 0 and n % 2 == 1]
+        # Define even/odd numbers
+        self.even_numbers = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36]
+        self.odd_numbers = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35]
         self.red_numbers = [n for n, color in self.colors.items() if color == 'red']
         self.black_numbers = [n for n, color in self.colors.items() if color == 'black']
         self.zero = 0
@@ -75,9 +75,32 @@ class Roulette:
             (32,33,35,36): [32, 33, 35, 36]
         }
 
-    def spin(self) -> int:
-        """Simulate a spin of the roulette wheel and return the winning number."""
-        return random.choice(self.numbers)
+    def spin(self, bets: Dict[str, float]) -> Tuple[int, float]:
+        """Spin the wheel and calculate winnings."""
+        # Girar la ruleta
+        winning_number = random.choice(self.numbers)
+        winning_color = self.colors[winning_number]
+        
+        # Calcular ganancias
+        winnings = 0.0
+        for bet_type, bet_amount in bets.items():
+            # Apuestas a números individuales
+            if bet_type.isdigit() and int(bet_type) == winning_number:
+                winnings += bet_amount * 36  # Pago 35:1 para números individuales
+            
+            # Apuestas a colores
+            elif bet_type in ['red', 'black'] and bet_type == winning_color:
+                winnings += bet_amount * 2  # Pago 1:1 para colores
+            
+            # Apuestas a par/impar
+            elif bet_type == 'even' and winning_number in self.even_numbers:
+                winnings += bet_amount * 2  # Pago 1:1 para par/impar
+            elif bet_type == 'odd' and winning_number in self.odd_numbers:
+                winnings += bet_amount * 2  # Pago 1:1 para par/impar
+        
+        # Restar el total apostado
+        total_bet = sum(bets.values())
+        return winning_number, winnings - total_bet
 
     def get_number_properties(self, number: int) -> Dict:
         """Get all properties of a given number."""

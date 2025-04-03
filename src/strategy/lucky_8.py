@@ -1,70 +1,55 @@
 from typing import Dict
-import random
 from .base_strategy import BaseStrategy
 
 class Lucky8Strategy(BaseStrategy):
-    def __init__(self, initial_bankroll: float, min_bet: float = 1.0):
+    def __init__(self, initial_bankroll: float = 1000.0, min_bet: float = 1.0):
         super().__init__(initial_bankroll, min_bet)
         self.base_bet = min_bet
-        self.current_bet = min_bet
         self.consecutive_losses = 0
-        self.max_consecutive_losses = 6
-        self.lucky_8_numbers = [8, 18, 28, 38]  # Números que contienen 8
-        self.lucky_8_combinations = [
-            [8, 18], [8, 28], [8, 38],
-            [18, 28], [18, 38], [28, 38]
+        self.session_profit = 0.0
+        self.target_profit = initial_bankroll * 0.1  # 10% del bankroll inicial
+        self.lucky_numbers = [8, 18, 28]  # Números asociados con 8
+        self.combinations = [
+            [8, 18], [8, 28], [18, 28],  # Combinaciones de números 8
+            [8, 17, 26], [8, 19, 27],    # Combinaciones de 3 números
+            [8, 17, 26, 35]              # Combinación de 4 números
         ]
-        self.last_bet_type = None
-        self.session_profit = 0
-        self.target_profit = initial_bankroll * 0.06  # 6% del bankroll inicial como objetivo
+        self.current_combination_index = 0
 
     def calculate_bet(self) -> Dict[str, float]:
-        """Calculate the next bet using Lucky 8 strategy."""
-        # Ajustar apuesta basada en pérdidas consecutivas
-        if self.consecutive_losses > 0:
-            self.current_bet = self.base_bet * (1.2 ** self.consecutive_losses)
-        else:
-            self.current_bet = self.base_bet
-
-        # Asegurar que no apostamos más que nuestro bankroll
-        if self.current_bet > self.current_bankroll:
-            self.current_bet = self.current_bankroll
-
-        # Determinar tipo de apuesta
-        if self.last_bet_type is None or self.consecutive_losses >= 3:
-            # Alternar entre lucky 8 numbers y combinaciones
-            self.last_bet_type = 'single' if self.last_bet_type != 'single' else 'combination'
+        """Calculate the next bet based on the Lucky 8 strategy."""
+        if self.consecutive_losses >= 3:
+            # Después de 3 pérdidas consecutivas, apostar solo a números individuales
+            bet_amount = self.base_bet * (self.consecutive_losses - 2)
+            return {str(num): bet_amount for num in self.lucky_numbers}
         
-        # Colocar apuesta según el tipo
-        if self.last_bet_type == 'single':
-            lucky_number = random.choice(self.lucky_8_numbers)
-            return {str(lucky_number): self.current_bet}
+        # Alternar entre números individuales y combinaciones
+        if self.consecutive_losses % 2 == 0:
+            # Apostar a números individuales
+            bet_amount = self.base_bet
+            return {str(num): bet_amount for num in self.lucky_numbers}
         else:
-            # Elegir una combinación aleatoria de dos números
-            combination = random.choice(self.lucky_8_combinations)
-            bet_per_number = self.current_bet / 2
-            return {str(num): bet_per_number for num in combination}
+            # Apostar a combinaciones
+            combination = self.combinations[self.current_combination_index]
+            bet_amount = self.base_bet / len(combination)
+            self.current_combination_index = (self.current_combination_index + 1) % len(self.combinations)
+            return {str(num): bet_amount for num in combination}
 
-    def update_bankroll(self, winnings: float) -> None:
-        """Update the bankroll and strategy state."""
-        super().update_bankroll(winnings)
+    def update_bankroll(self, winnings: float):
+        """Update the bankroll and strategy state based on winnings."""
+        self.current_bankroll += winnings
+        self.session_profit += winnings
         
-        # Actualizar contador de pérdidas consecutivas y ganancias de la sesión
-        if winnings < 0:
-            self.consecutive_losses += 1
-        else:
+        if winnings > 0:
             self.consecutive_losses = 0
-            self.session_profit += winnings
+            if self.session_profit >= self.target_profit:
+                self.session_profit = 0.0
+        else:
+            self.consecutive_losses += 1
 
-        # Si alcanzamos el objetivo de ganancia, reiniciamos
-        if self.session_profit >= self.target_profit:
-            self.session_profit = 0
-            self.current_bet = self.base_bet
-
-    def reset(self) -> None:
-        """Reset the strategy to its initial state."""
+    def reset(self):
+        """Reset the strategy state."""
         super().reset()
         self.consecutive_losses = 0
-        self.session_profit = 0
-        self.last_bet_type = None
-        self.current_bet = self.base_bet 
+        self.session_profit = 0.0
+        self.current_combination_index = 0 

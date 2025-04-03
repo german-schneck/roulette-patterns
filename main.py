@@ -10,12 +10,16 @@ from src.strategy.oscar import OscarStrategy
 from src.strategy.dragon_tiger import DragonTigerStrategy
 from src.strategy.golden_eagle import GoldenEagleStrategy
 from src.strategy.lucky_8 import Lucky8Strategy
+from src.strategy.labouchere import LabouchereStrategy
+from src.strategy.one_three_two_six import OneThreeTwoSixStrategy
 import matplotlib.pyplot as plt
 from typing import List, Tuple
 
 # Default configuration values
 INITIAL_BANKROLL = 1000.0
-NUM_SIMULATIONS = 10
+NUM_SIMULATIONS = 100
+MAX_SPINS = 1000
+PROFIT_TARGET_PERCENTAGE = 50.0
 
 def print_progress_bar(current, total, prefix='', suffix='', length=50, fill='█'):
     """Print a progress bar to the console."""
@@ -50,62 +54,81 @@ def format_numbers(numbers: List[Tuple[int, int]]) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description='Simulador de Ruleta Americana')
-    parser.add_argument('--initial-bankroll', type=float, default=1000.0,
-                      help='Bankroll inicial para cada simulación')
-    parser.add_argument('--num-simulations', type=int, default=100,
-                      help='Número de simulaciones a ejecutar')
+    parser.add_argument('--initial-bankroll', type=float, default=INITIAL_BANKROLL,
+                       help='Bankroll inicial para cada simulación')
+    parser.add_argument('--num-simulations', type=int, default=NUM_SIMULATIONS,
+                       help='Número de simulaciones a ejecutar')
     parser.add_argument('--min-bet', type=float, default=1.0,
-                      help='Apuesta mínima permitida')
+                       help='Apuesta mínima permitida')
+    parser.add_argument('--max-spins', type=int, default=MAX_SPINS,
+                       help='Número máximo de tiradas por sesión')
+    parser.add_argument('--profit-target', type=float, default=PROFIT_TARGET_PERCENTAGE,
+                       help='Objetivo de ganancia como porcentaje del bankroll inicial')
     parser.add_argument('--output-plot', type=str, default='results.png',
-                      help='Ruta del archivo de gráfico de resultados')
+                       help='Ruta del archivo de gráfico de resultados')
     args = parser.parse_args()
 
     print("\n=== Configuración de Simulación ===")
     print(f"Bankroll inicial: ${args.initial_bankroll:,.2f}")
     print(f"Simulaciones por estrategia: {args.num_simulations}")
     print(f"Apuesta mínima: ${args.min_bet:,.2f}")
+    print(f"Máximo de tiradas: {args.max_spins}")
+    print(f"Objetivo de ganancia: {args.profit_target}% del bankroll inicial")
     print("-" * 40)
 
     # Definir las estrategias a probar
     strategies = [
-        MartingaleStrategy,
-        FibonacciStrategy,
-        PatternStrategy,
-        ParoliStrategy,
-        DAlembertStrategy,
-        OscarStrategy,
-        DragonTigerStrategy,
-        GoldenEagleStrategy,
-        Lucky8Strategy
+        MartingaleStrategy(args.initial_bankroll, args.min_bet),
+        FibonacciStrategy(args.initial_bankroll, args.min_bet),
+        PatternStrategy(args.initial_bankroll, args.min_bet),
+        ParoliStrategy(args.initial_bankroll, args.min_bet),
+        DAlembertStrategy(args.initial_bankroll, args.min_bet),
+        OscarStrategy(args.initial_bankroll, args.min_bet),
+        DragonTigerStrategy(args.initial_bankroll, args.min_bet),
+        GoldenEagleStrategy(args.initial_bankroll, args.min_bet),
+        Lucky8Strategy(args.initial_bankroll, args.min_bet),
+        LabouchereStrategy(args.initial_bankroll, args.min_bet),
+        OneThreeTwoSixStrategy(args.initial_bankroll, args.min_bet)
     ]
-
+    
     # Crear y ejecutar el simulador
-    simulator = Simulator(
-        initial_bankroll=args.initial_bankroll,
-        num_simulations=args.num_simulations,
-        min_bet=args.min_bet,
-        strategies=strategies
-    )
-
+    simulator = Simulator(strategies, max_spins=args.max_spins, profit_target_percentage=args.profit_target)
+    
     # Ejecutar simulaciones
-    results = simulator.run_simulations()
-
+    results = simulator.run_simulations(args.num_simulations)
+    
     # Analizar resultados
     analysis = simulator.analyze_results(results)
-
+    
+    # Obtener patrones más exitosos
+    patterns = simulator.get_best_betting_patterns(results)
+    
     # Imprimir resumen conciso
     print("\n=== Resumen de Estrategias ===")
     for strategy_name, metrics in analysis.items():
         win_rate = metrics['win_rate'] * 100
-        patterns = [f"{format_pattern(pattern)} ({count})" 
-                   for pattern, count in metrics['successful_patterns']]
-        patterns_str = " | ".join(patterns)
-        numbers_str = format_numbers(metrics['successful_numbers'])
+        success_rate = metrics['success_rate'] * 100
+        avg_profit = metrics['avg_profit_loss']
+        
         print(f"\n{strategy_name}:")
-        print(f"  Patrones: {patterns_str}")
-        print(f"  Números: {numbers_str}")
-        print(f"  Rate: {win_rate:.2f}%")
-
+        print(f"  Probabilidad de éxito: {success_rate:.2f}%")
+        print(f"  Tasa de victoria: {win_rate:.2f}%")
+        print(f"  Beneficio/Pérdida promedio: ${avg_profit:.2f}")
+        
+        # Mostrar estadísticas de terminación
+        bankruptcy = metrics['bankruptcy_count']
+        max_spins = metrics['max_spins_count']
+        profit_target = metrics['profit_target_count']
+        print(f"  Terminación por bancarrota: {bankruptcy} ({bankruptcy/args.num_simulations:.1%})")
+        print(f"  Terminación por máx. tiradas: {max_spins} ({max_spins/args.num_simulations:.1%})")
+        print(f"  Terminación por objetivo: {profit_target} ({profit_target/args.num_simulations:.1%})")
+        
+        # Mostrar patrones más exitosos
+        strategy_patterns = patterns[strategy_name]
+        if strategy_patterns:
+            patterns_str = ", ".join([f"{num}({count})" for num, count in strategy_patterns[:5]])
+            print(f"  Números más efectivos: {patterns_str}")
+    
     # Generar gráficos
     simulator.plot_results(results, args.output_plot)
     print(f"\nGráficos guardados en: {args.output_plot}")
